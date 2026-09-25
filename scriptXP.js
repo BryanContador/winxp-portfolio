@@ -486,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
         wrapper.className = 'xp-thumbnail';
         
         const img = document.createElement('img');
-        img.src = itemData.thumb || 'resources/logo.png';
+        img.src = getAbsoluteUrl(itemData.thumb || 'resources/logo.png');
         img.loading = "lazy";
         
         const label = document.createElement('span');
@@ -643,16 +643,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const altBtn = windowEl.querySelector('.pv-alt');
         const loaderText = windowEl.querySelector('.pv-loader');
         
-        let sources = [item.highRes || item.thumb];
+        // Wrap the main source in getAbsoluteUrl
+        let sources = [getAbsoluteUrl(item.highRes || item.thumb)];
         let sensitivities = [item.sensitive === true];
 
         if (item.altSources && item.altSources.length > 0) {
             item.altSources.forEach(alt => {
                 if (typeof alt === 'string') {
-                    sources.push(alt);
-                    sensitivities.push(item.sensitive === true); // Inherit main sensitivity
+                    // Wrap the string alt source
+                    sources.push(getAbsoluteUrl(alt));
+                    sensitivities.push(item.sensitive === true); 
                 } else if (typeof alt === 'object') {
-                    sources.push(alt.src);
+                    // Wrap the object alt source
+                    sources.push(getAbsoluteUrl(alt.src));
                     sensitivities.push(alt.sensitive !== undefined ? alt.sensitive : item.sensitive === true);
                 }
             });
