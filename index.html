@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web OS -  - Benjamin Counter (Bryan Contador) — Digital Artist Portfolio</title>
+    <link rel="stylesheet" href="styleXP.css">
+    <!-- Classic Windows XP Font Fallbacks -->
+    <style>
+        body { font-family: Tahoma, 'Segoe UI', Geneva, sans-serif; }
+    </style>
+
+    <link rel="icon" type="image/png" href="resources/Menu/logoXP_bc_icon.png">
+
+
+    <meta name="description" content="Benjamin Counter's art Portfolio.">
+    <meta property="og:title" content="Benjamin Counter - Desktop OS">
+    <meta property="og:description" content="View my latest character designs, fanart, and web experiments.">
+    <meta property="og:image" content="https://bryancontador.github.io/resources/Menu/logoXP_bc.png">
+    <meta property="og:url" content="https://bryancontador.github.io/WinXP.html">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Benjamin Counter Desktop OS",
+        "url": "https://bryancontador.github.io/WinXP.html",
+        "author": {
+            "@type": "Person",
+            "name": "Benjamin Counter"
+        }
+        }
+    </script>
+</head>
+<body>
+
+    <div id="desktop">
+        <div id="desktop-icons-container">
+            <!-- Static Icons -->
+            <div class="desktop-icon" data-app="about" data-small-icon="resources/Menu/small-My_computer-48x48x32.png">
+                <img src="resources/Menu/My_computer-48x48x32.png" alt="My Computer">
+                <span>About Me</span>
+            </div>
+            <div class="desktop-icon" data-app="fanart" data-small-icon="resources/Menu/small-folder_16x32.png">
+                <img src="resources/Menu/fanart-48x48x32.png" alt="My Documents">
+                <span>Gifts & Fanart</span>
+            </div>
+            
+            <!-- Dynamic Character Icons will be injected here by JS -->
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         START MENU, DESATURATION OVERLAY & SHUTDOWN SCREENS
+         ========================================================================== -->
+    <div id="start-menu" class="hidden">
+        <div class="start-menu-header">
+            <img src="resources/Menu/logoXP_bc.png" alt="User">
+            <span>Benjamin Counter</span>
+        </div>
+        <div class="start-menu-body">
+            <div class="start-menu-left">
+                <div id="start-menu-apps">
+                    <!-- Static Apps -->
+                    <div class="sm-left-item" data-app="about" data-small-icon="resources/Menu/small-My_computer-48x48x32.png">
+                        <img src="resources/Menu/My_computer-48x48x32.png" alt="About Me">
+                        <div class="sm-item-text">
+                            <strong>About Me</strong>
+                            <span>Creator Info</span>
+                        </div>
+                    </div>
+                    <div class="sm-left-item" data-app="fanart" data-small-icon="resources/Menu/small-folder_16x32.png">
+                        <img src="resources/Menu/fanart-48x48x32.png" alt="Gifts & Fanart">
+                        <div class="sm-item-text">
+                            <strong>Gifts & Fanart</strong>
+                            <span>Folder</span>
+                        </div>
+                    </div>
+                    <!-- Dynamic Character Apps will be appended here via JS -->
+                </div>
+                <div class="all-programs-btn">
+                    <strong>All Programs</strong>
+                    <span class="triangle-right">▶</span>
+                </div>
+            </div>
+            <div class="start-menu-right">
+                <!-- Working Apps -->
+                <div class="sm-right-item" data-app="notepad" data-small-icon="resources/Menu/notepad.png">
+                    <img src="resources/Menu/notepad.png" alt="Notepad">
+                    <span>Notepad</span>
+                </div>
+                <div class="sm-divider"></div>
+                <div class="sm-right-item" data-app="cmd" data-small-icon="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png">
+                    <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png" alt="Run">
+                    <span>Run...</span>
+                </div>
+            </div>
+        </div>
+        <div class="start-menu-footer">
+            <div class="start-menu-btn" id="start-btn-turnoff">
+                <img src="resources/Menu/shutdown-button.jpg" alt="Turn Off">
+                <span>Turn Off Computer</span>
+            </div>
+        </div>
+    </div>
+    
+    <div id="taskbar">
+        <div id="start-button">
+            <img src="resources/Menu/logoXP.png" alt="Windows Logo" width="16" height="16">
+            <span>start</span>
+        </div>
+
+        <div id="taskbar-tasks"></div>
+
+        <div id="system-tray">
+            <img src="resources/Menu/wdefend_icon.png" alt="Windows Defender" width="16" height="16">
+            <img src="resources/Menu/messenger_icon.png" alt="Messenger" width="16" height="16">
+            <img src="resources/Menu/volume-32x32x4.png" alt="Volume" width="16" height="16">
+            <span id="clock">12:00 PM</span>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         FINAL SHUTDOWN OVERLAY & DIALOG
+         ========================================================================== -->
+    <div id="shutdown-overlay">
+        <div id="turn-off-dialog">
+            <div class="tod-header">
+                <span>Turn off computer</span>
+            </div>
+            <div class="tod-body">
+                <div class="tod-btn-group">
+                    <div class="tod-btn" id="tod-restart">
+                        <img src="resources/Menu/restart-button.jpg" alt="Restart"> 
+                        <span>Restart</span>
+                    </div>
+                    <div class="tod-btn" id="tod-shutdown">
+                        <img src="resources/Menu/shutdown-button.jpg" alt="Turn Off">
+                        <span>Turn Off</span>
+                    </div>
+                </div>
+            </div>
+            <div class="tod-footer">
+                <button id="tod-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         BLUE SHUTTING DOWN SCREEN
+         ========================================================================== -->
+    <div id="logoff-screen">
+        <div class="logoff-bar top"></div>
+        <div class="logoff-center">
+            <img src="resources/Menu/logoXP.png" alt="Windows Logo" width="64">
+            <span>Windows is shutting down...</span>
+        </div>
+        <div class="logoff-bar bottom"></div>
+    </div>
+
+    <template id="window-template">
+        <div class="xp-window">
+            <div class="title-bar">
+                <div class="title-bar-text">
+                    <img class="window-icon" src="" alt="icon">
+                    <span class="window-title">Window Title</span>
+                </div>
+                <div class="title-bar-controls">
+                    <button aria-label="Minimize" class="btn-minimize"></button>
+                    <button aria-label="Maximize" class="btn-maximize"></button>
+                    <button aria-label="Close" class="btn-close"></button>
+                </div>
+            </div>
+            <div class="window-body">
+                <div class="window-content">
+                    <p style="padding: 20px;">Loading content...</p>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="data.js"></script>
+    <script src="scriptXP.js"></script>
+</body>
+</html>
