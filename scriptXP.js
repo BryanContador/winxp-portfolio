@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         //'bertie': 'resources/Menu/bertie_48x48x32.png',
         'demon_girl': 'resources/Menu/demon_48x48x32.png',
         'misc': 'resources/Menu/others-48x48x32.png'
-    };
+    }; 
 
     if (typeof galleryData !== 'undefined' && galleryData.categories) {
         galleryData.categories.forEach(character => {
