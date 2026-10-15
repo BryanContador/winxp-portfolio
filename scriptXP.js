@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'sunshine': 'resources/Menu/sunshine_48x48x32.png',
         'jamol': 'resources/Menu/jamol_48x48x32.png',
         'berkut': 'resources/Menu/berkut_48x48x32.png',
-        //'persona': 'resources/Menu/persona_48x48x32.png',
+        'persona': 'resources/Menu/persona_48x48x32.png',
         'demon_girl': 'resources/Menu/demon_48x48x32.png',
         'misc': 'resources/Menu/others-48x48x32.png'
     }; 
