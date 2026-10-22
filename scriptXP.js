@@ -519,6 +519,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let viewerCurrentIndex = 0;
     let viewerAltIndex = 0; // Tracks which alt image we are on
     let viewerZoomLevel = 1; // Tracks zoom multiplier
+
+    const MIN_ZOOM = 1;   // Default 100% fit
+    const MAX_ZOOM = 4;   // Max 400% zoom (adjust to taste, e.g. 5 or 6)
+    const ZOOM_STEP = 0.5;
     
     // Panning variables
     let isPanning = false, panStartX, panStartY, scrollLeft, scrollTop;
@@ -596,9 +600,27 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Zoom Controls
-            contentContainer.querySelector('.pv-zoom-in').addEventListener('click', () => { viewerZoomLevel += 0.5; applyZoom(); });
-            contentContainer.querySelector('.pv-zoom-out').addEventListener('click', () => { if(viewerZoomLevel > 0.5) viewerZoomLevel -= 0.5; applyZoom(); });
-            contentContainer.querySelector('.pv-zoom-reset').addEventListener('click', () => { viewerZoomLevel = 1; applyZoom(); });
+            // Zoom In: Only increase if below MAX_ZOOM
+            contentContainer.querySelector('.pv-zoom-in').addEventListener('click', () => { 
+                if (viewerZoomLevel < MAX_ZOOM) {
+                    viewerZoomLevel = Math.min(MAX_ZOOM, viewerZoomLevel + ZOOM_STEP);
+                    applyZoom(); 
+                }
+            });
+
+            // Zoom Out: Only decrease if above MIN_ZOOM
+            contentContainer.querySelector('.pv-zoom-out').addEventListener('click', () => { 
+                if (viewerZoomLevel > MIN_ZOOM) {
+                    viewerZoomLevel = Math.max(MIN_ZOOM, viewerZoomLevel - ZOOM_STEP);
+                    applyZoom(); 
+                }
+            });
+
+            // Zoom Reset
+            contentContainer.querySelector('.pv-zoom-reset').addEventListener('click', () => { 
+                viewerZoomLevel = 1; 
+                applyZoom(); 
+            });
 
             // Sensitive Content un-blur
             warningBtn.addEventListener('click', () => {
