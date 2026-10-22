@@ -1,3 +1,0 @@
-This is a test file. Do not read.
-Number 2.
-Number 3.
