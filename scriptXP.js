@@ -630,8 +630,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // Panning Logic (Click and Drag when zoomed)
-            imgEl.addEventListener('mousedown', (e) => {
-                if (viewerZoomLevel > 1) {
+            // Prevent default native image dragging (ghost image)
+            imgEl.setAttribute('draggable', 'false');
+            imgEl.addEventListener('dragstart', (e) => e.preventDefault());
+
+            //Start Panning on Mousedown
+            displayArea.addEventListener('mousedown', (e) => {
+                // Only pan if zoomed in and left mouse button is clicked
+                if (viewerZoomLevel > 1 && e.button === 0) {
+                    e.preventDefault(); // Prevents ghost image & text selection
                     isPanning = true;
                     panStartX = e.pageX - displayArea.offsetLeft;
                     panStartY = e.pageY - displayArea.offsetTop;
@@ -639,8 +646,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     scrollTop = displayArea.scrollTop;
                 }
             });
+
+            // Move/Pan only while the button is physically held down
             displayArea.addEventListener('mousemove', (e) => {
-                if (!isPanning) return;
+                // Failsafe: if the user released the click anywhere, stop panning immediately
+                if (!isPanning || e.buttons !== 1) {
+                    isPanning = false;
+                    return;
+                }
                 e.preventDefault();
                 const x = e.pageX - displayArea.offsetLeft;
                 const y = e.pageY - displayArea.offsetTop;
@@ -649,7 +662,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayArea.scrollLeft = scrollLeft - walkX;
                 displayArea.scrollTop = scrollTop - walkY;
             });
-            window.addEventListener('mouseup', () => isPanning = false);
+
+            //Stop Panning on Mouseup or when mouse leaves the viewer window
+            window.addEventListener('mouseup', () => {
+                isPanning = false;
+            });
         }
         
         updatePictureViewerUI();
