@@ -793,6 +793,67 @@ body {
     outline: none; box-sizing: border-box;
 }
 
+/* ==========================================================================
+   ABOUT ICONS DIALOG & XP BUTTON STYLES
+   ========================================================================== */
+.xp-window.xp-dialog-window {
+    width: 420px;
+    height: auto;
+}
+
+.xp-about-icons-content {
+    padding: 18px 20px 14px 20px;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #000;
+}
+
+.xp-about-icons-content p {
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.xp-about-icons-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.xp-btn {
+    min-width: 75px;
+    height: 23px;
+    padding: 0 14px;
+    font-family: Tahoma, 'Segoe UI', Geneva, sans-serif;
+    font-size: 11px;
+    color: #000;
+    background: linear-gradient(to bottom, #ffffff 0%, #ece9d8 15%, #ece9d8 85%, #d8d4c4 100%);
+    border: 1px solid #003c74;
+    border-radius: 3px;
+    box-shadow: inset 1px 1px 0px #fff, inset -1px -1px 0px #808080;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+}
+
+.xp-btn:hover {
+    background: linear-gradient(to bottom, #ffffff 0%, #f5f4ea 15%, #ece9d8 85%, #e2ded0 100%);
+    border-color: #0058ee;
+    box-shadow: inset 1px 1px 0px #fff, inset -1px -1px 0px #e0a030, 0 0 1px #0058ee;
+}
+
+.xp-btn:active {
+    background: #dedcd0;
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.4);
+    padding-top: 1px;
+    padding-left: 15px;
+}
+
+.xp-btn:focus {
+    outline: 1px dotted #000;
+    outline-offset: -4px;
+}
 
 /*
 body {

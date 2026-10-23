@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (typeof galleryData !== 'undefined' && galleryData.categories) {
         galleryData.categories.forEach(character => {
-            const iconSrc = customCharacterIcons[character.id] || "https://win98icons.alexmeub.com/icons/png/directory_closed-4.png";
+            const iconSrc = customCharacterIcons[character.id] || "resources/Menu/directory_closed.png";
 
             // 1. Create Desktop Icon
             const iconDiv = document.createElement('div');
@@ -386,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (appId === 'cmd') {
             contentContainer.innerHTML = `
                 <div class="xp-run-layout">
-                    <img src="https://win98icons.alexmeub.com/icons/png/console_prompt-0.png" alt="Run">
+                    <img src="resources/Menu/CMD_image2.png" alt="Run">
                     <div class="xp-run-content">
                         <p>Type the name of a program, folder, document, or Internet resource, and Windows will open it for you.</p>
                         <div class="xp-run-input-group">
@@ -437,7 +437,39 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // 5. CHARACTER & PROJECT FOLDERS
+        // 5. ABOUT ICONS APP
+        if (appId === 'About Icons') {
+            const windowEl = contentContainer.closest('.xp-window');
+            if (windowEl && window.innerWidth > 768) {
+                windowEl.classList.add('xp-dialog-window');
+                windowEl.style.width = '420px';
+                windowEl.style.height = 'auto';
+            }
+
+            contentContainer.innerHTML = `
+                <div class="xp-about-icons-content">
+                    <p>Most of the icons used in this project are extracted directly from an official Windows XP ISO. I do not claim ownership of these images; all associated rights and copyrights belong to Microsoft Corporation.</p>
+                    <p>All original content (including artwork, descriptions, and other text), is Copyright © 2026 Benjamin Counter. All Rights Reserved. Protected under the laws of Mexico and international copyright treaties</p>
+                    <div class="xp-about-icons-actions">
+                        <button class="xp-btn" id="about-icons-ok-btn">OK</button>
+                    </div>
+                </div>
+            `;
+
+            const okBtn = contentContainer.querySelector('#about-icons-ok-btn');
+            if (okBtn) {
+                okBtn.addEventListener('click', () => {
+                    const win = contentContainer.closest('.xp-window');
+                    if (win) {
+                        const closeBtn = win.querySelector('.btn-close');
+                        if (closeBtn) closeBtn.click();
+                    }
+                });
+            }
+            return;
+        }
+        
+        // 6. CHARACTER & PROJECT FOLDERS
         const characterData = galleryData.categories.find(c => c.id === appId);
         if (characterData) {
             let sidebarInfo = '';
