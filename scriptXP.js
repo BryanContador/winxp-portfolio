@@ -233,8 +233,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 windowEl.style.width = prevWidth || '600px';
                 windowEl.style.height = prevHeight || '450px';
                 isMaximized = false;
+
+                // Ensure restored position is clamped to current viewport
+                if (window.innerWidth > 768) {
+                    const clamped = getClampedPosition(windowEl.offsetTop, windowEl.offsetLeft, windowEl.offsetWidth);
+                    windowEl.style.top = clamped.top + "px";
+                    windowEl.style.left = clamped.left + "px";
+                }
             }
         }
+
         btnMaximize.addEventListener('click', toggleMaximize);
         titleBar.addEventListener('dblclick', toggleMaximize);
 
@@ -249,6 +257,42 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.taskbar-item').forEach(item => item.classList.remove('active'));
         taskbarEl.classList.add('active');
     }
+
+    // ==========================================================================
+    // WINDOW POSITION CLAMPING HELPER
+    // ==========================================================================
+    function getClampedPosition(top, left, width) {
+        let clampedTop = top;
+        let clampedLeft = left;
+
+        // BOUNDARY CHECK: Top ceiling
+        if (clampedTop < 0) clampedTop = 0;
+
+        // BOUNDARY CHECK: Bottom floor (Keep title bar accessible above taskbar)
+        // 60 = 30px taskbar + 30px safe space for the title bar
+        const maxTop = Math.max(0, window.innerHeight - 60);
+        if (clampedTop > maxTop) clampedTop = maxTop;
+
+        // BOUNDARY CHECK: Left edge
+        if (clampedLeft < 0) clampedLeft = 0;
+
+        // BOUNDARY CHECK: Right edge (accounts for window's actual width)
+        const maxLeft = Math.max(0, window.innerWidth - width);
+        if (clampedLeft > maxLeft) clampedLeft = maxLeft;
+
+        return { top: clampedTop, left: clampedLeft };
+    }
+
+    // Keep open windows within bounds if the viewport changes size
+    window.addEventListener('resize', () => {
+        if (window.innerWidth <= 768) return; // Mobile layout uses CSS 100vw rules
+        Object.values(openWindows).forEach(({ windowEl }) => {
+            if (windowEl.classList.contains('maximized') || windowEl.style.display === 'none') return;
+            const clamped = getClampedPosition(windowEl.offsetTop, windowEl.offsetLeft, windowEl.offsetWidth);
+            windowEl.style.top = clamped.top + "px";
+            windowEl.style.left = clamped.left + "px";
+        });
+    });
 
     function makeDraggable(windowEl, dragHandle) {
         let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -279,19 +323,13 @@ document.addEventListener('DOMContentLoaded', () => {
             pos3 = e.clientX;
             pos4 = e.clientY;
             
-            let newTop = windowEl.offsetTop - pos2;
-            let newLeft = windowEl.offsetLeft - pos1;
+            const newTop = windowEl.offsetTop - pos2;
+            const newLeft = windowEl.offsetLeft - pos1;
 
-            // BOUNDARY CHECK: Top ceiling
-            if (newTop < 0) newTop = 0; 
-            
-            // BOUNDARY CHECK: Bottom floor (Keep title bar accessible above taskbar)
-            // 60 = 30px taskbar + 30px safe space for the title bar
-            const maxTop = Math.max(0, window.innerHeight - 60); 
-            if (newTop > maxTop) newTop = maxTop;
+            const clamped = getClampedPosition(newTop, newLeft, windowEl.offsetWidth);
 
-            windowEl.style.top = newTop + "px";
-            windowEl.style.left = newLeft + "px";
+            windowEl.style.top = clamped.top + "px";
+            windowEl.style.left = clamped.left + "px";
         }
 
         function elementTouchDrag(e) {
@@ -300,18 +338,13 @@ document.addEventListener('DOMContentLoaded', () => {
             pos3 = e.touches[0].clientX;
             pos4 = e.touches[0].clientY;
             
-            let newTop = windowEl.offsetTop - pos2;
-            let newLeft = windowEl.offsetLeft - pos1;
+            const newTop = windowEl.offsetTop - pos2;
+            const newLeft = windowEl.offsetLeft - pos1;
 
-            //bondary top
-            if (newTop < 0) newTop = 0;
+            const clamped = getClampedPosition(newTop, newLeft, windowEl.offsetWidth);
 
-            //boundary bottom
-            const maxTop = Math.max(0, window.innerHeight - 60); 
-            if (newTop > maxTop) newTop = maxTop;
-
-            windowEl.style.top = newTop + "px";
-            windowEl.style.left = newLeft + "px";
+            windowEl.style.top = clamped.top + "px";
+            windowEl.style.left = clamped.left + "px";
         }
 
         function closeDragElement() {
