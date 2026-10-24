@@ -218,12 +218,152 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnMaximize = windowEl.querySelector('.btn-maximize');
         const titleBar = windowEl.querySelector('.title-bar');
 
+        // ==========================================================================
+        // WINDOW RESIZING SYSTEM
+        // ==========================================================================
+        function makeResizable(windowEl, taskbarBtn) {
+            if (windowEl.classList.contains('xp-dialog-window')) return;
+
+            const directions = ['n', 's', 'e', 'w', 'nw', 'ne', 'sw', 'se'];
+            const MIN_WIDTH = 250;
+            const MIN_HEIGHT = 150;
+
+            directions.forEach(dir => {
+                const handle = document.createElement('div');
+                handle.className = `resize-handle rh-${dir}`;
+                handle.dataset.direction = dir;
+                windowEl.appendChild(handle);
+
+                handle.addEventListener('mousedown', initResizeMouse);
+                handle.addEventListener('touchstart', initResizeTouch, { passive: false });
+            });
+
+            function initResizeMouse(e) {
+                if (windowEl.classList.contains('maximized')) return;
+                if (e.button !== 0) return; // Left mouse button only
+                e.preventDefault();
+                e.stopPropagation();
+
+                focusWindow(windowEl, taskbarBtn);
+
+                const dir = e.currentTarget.dataset.direction;
+                startResizing(e.clientX, e.clientY, dir);
+            }
+
+            function initResizeTouch(e) {
+                if (windowEl.classList.contains('maximized')) return;
+                if (e.touches.length !== 1) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                focusWindow(windowEl, taskbarBtn);
+
+                const dir = e.currentTarget.dataset.direction;
+                startResizing(e.touches[0].clientX, e.touches[0].clientY, dir);
+            }
+
+            function startResizing(startX, startY, dir) {
+                const initialLeft = windowEl.offsetLeft;
+                const initialTop = windowEl.offsetTop;
+                const initialWidth = windowEl.offsetWidth;
+                const initialHeight = windowEl.offsetHeight;
+                const initialRight = initialLeft + initialWidth;
+                const initialBottom = initialTop + initialHeight;
+
+                const cursorMap = {
+                    'n': 'ns-resize', 's': 'ns-resize',
+                    'e': 'ew-resize', 'w': 'ew-resize',
+                    'nw': 'nwse-resize', 'se': 'nwse-resize',
+                    'ne': 'nesw-resize', 'sw': 'nesw-resize'
+                };
+
+                const prevCursor = document.body.style.cursor;
+                document.body.style.cursor = cursorMap[dir] || 'default';
+
+                let rafId = null;
+
+                function doResize(clientX, clientY) {
+                    const deltaX = clientX - startX;
+                    const deltaY = clientY - startY;
+
+                    let newLeft = initialLeft;
+                    let newTop = initialTop;
+                    let newWidth = initialWidth;
+                    let newHeight = initialHeight;
+
+                    // Horizontal component
+                    if (dir.includes('e')) {
+                        const maxAllowedWidth = Math.max(MIN_WIDTH, window.innerWidth - initialLeft);
+                        newWidth = initialWidth + deltaX;
+                        if (newWidth < MIN_WIDTH) newWidth = MIN_WIDTH;
+                        if (newWidth > maxAllowedWidth) newWidth = maxAllowedWidth;
+                    } else if (dir.includes('w')) {
+                        let targetLeft = initialLeft + deltaX;
+                        if (targetLeft < 0) targetLeft = 0;
+                        const maxLeft = initialRight - MIN_WIDTH;
+                        if (targetLeft > maxLeft) targetLeft = maxLeft;
+                        newLeft = targetLeft;
+                        newWidth = initialRight - newLeft;
+                    }
+
+                    // Vertical component
+                    if (dir.includes('s')) {
+                        const maxAllowedHeight = Math.max(MIN_HEIGHT, window.innerHeight - 30 - initialTop);
+                        newHeight = initialHeight + deltaY;
+                        if (newHeight < MIN_HEIGHT) newHeight = MIN_HEIGHT;
+                        if (newHeight > maxAllowedHeight) newHeight = maxAllowedHeight;
+                    } else if (dir.includes('n')) {
+                        let targetTop = initialTop + deltaY;
+                        if (targetTop < 0) targetTop = 0;
+                        const maxTop = initialBottom - MIN_HEIGHT;
+                        if (targetTop > maxTop) targetTop = maxTop;
+                        newTop = targetTop;
+                        newHeight = initialBottom - newTop;
+                    }
+
+                    windowEl.style.left = `${newLeft}px`;
+                    windowEl.style.top = `${newTop}px`;
+                    windowEl.style.width = `${newWidth}px`;
+                    windowEl.style.height = `${newHeight}px`;
+                }
+
+                function onMouseMove(e) {
+                    e.preventDefault();
+                    if (rafId) cancelAnimationFrame(rafId);
+                    rafId = requestAnimationFrame(() => doResize(e.clientX, e.clientY));
+                }
+
+                function onTouchMove(e) {
+                    if (e.touches.length !== 1) return;
+                    e.preventDefault();
+                    if (rafId) cancelAnimationFrame(rafId);
+                    rafId = requestAnimationFrame(() => doResize(e.touches[0].clientX, e.touches[0].clientY));
+                }
+
+                function stopResizing() {
+                    if (rafId) cancelAnimationFrame(rafId);
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', stopResizing);
+                    document.removeEventListener('touchmove', onTouchMove);
+                    document.removeEventListener('touchend', stopResizing);
+                    document.removeEventListener('touchcancel', stopResizing);
+                    document.body.style.cursor = prevCursor;
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', stopResizing);
+                document.addEventListener('touchmove', onTouchMove, { passive: false });
+                document.addEventListener('touchend', stopResizing);
+                document.addEventListener('touchcancel', stopResizing);
+            }
+        }
+
         function toggleMaximize() {
             if (!isMaximized) {
                 prevTop = windowEl.style.top;
                 prevLeft = windowEl.style.left;
-                prevWidth = windowEl.style.width;
-                prevHeight = windowEl.style.height;
+                prevWidth = windowEl.style.width || (windowEl.offsetWidth + 'px');
+                prevHeight = windowEl.style.height || (windowEl.offsetHeight + 'px');
                 windowEl.classList.add('maximized');
                 isMaximized = true;
             } else {
@@ -234,8 +374,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 windowEl.style.height = prevHeight || '450px';
                 isMaximized = false;
 
-                // Ensure restored position is clamped to current viewport
+                // Ensure restored window fits current viewport
                 if (window.innerWidth > 768) {
+                    if (windowEl.offsetWidth > window.innerWidth) {
+                        windowEl.style.width = window.innerWidth + 'px';
+                    }
+                    const maxAllowedH = window.innerHeight - 30;
+                    if (windowEl.offsetHeight > maxAllowedH) {
+                        windowEl.style.height = maxAllowedH + 'px';
+                    }
+
                     const clamped = getClampedPosition(windowEl.offsetTop, windowEl.offsetLeft, windowEl.offsetWidth);
                     windowEl.style.top = clamped.top + "px";
                     windowEl.style.left = clamped.left + "px";
@@ -248,6 +396,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Make draggable
         makeDraggable(windowEl, titleBar);
+
+        // Make resizable
+        if (appId !== 'About Icons') {
+            makeResizable(windowEl, taskbarBtn);
+        }
     }
 
     function focusWindow(windowEl, taskbarEl) {
