@@ -697,6 +697,115 @@ document.addEventListener('DOMContentLoaded', () => {
                 charGrid.innerHTML = "<p>No artworks found in this folder.</p>";
             }
         }
+
+        // 7. UPDATES.DOC APP (GitHub Commit Tracker)
+        if (appId === 'updates') {
+            contentContainer.innerHTML = `
+                <div class="xp-doc-layout">
+                    <div class="xp-doc-page">
+                        <div class="xp-doc-header">
+                            <img src="resources/Menu/Updates.png" alt="UPDATES.doc">
+                            <div>
+                                <h2>UPDATES.doc</h2>
+                                <p>Project changelog: <a href="https://github.com/BryanContador/winxp-portfolio" target="_blank" style="color: #0055ea;">BryanContador/winxp-portfolio</a></p>
+                            </div>
+                        </div>
+                        <div class="xp-doc-body" id="updates-doc-body">
+                            <p style="color: #555;">Contacting GitHub API for latest revision...</p>
+                        </div>
+                        <div class="xp-doc-footer">
+                            <span style="color: #777; font-size: 10px;">Commits may take a few minutes to update.</span>
+                            <button class="xp-btn" id="updates-refresh-btn">Check for Updates</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const bodyEl = contentContainer.querySelector('#updates-doc-body');
+            const refreshBtn = contentContainer.querySelector('#updates-refresh-btn');
+
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+
+            function fetchLatestCommit() {
+                bodyEl.innerHTML = `<p style="color: #555;">Contacting GitHub API for latest revision...</p>`;
+                
+                const username = 'BryanContador';
+                const repo = 'winxp-portfolio';
+
+                // Fetch the latest commit from the default branch
+                fetch(`https://api.github.com/repos/${username}/${repo}/commits?per_page=1`)
+                    .then(response => {
+                        if (!response.ok) throw new Error("Branch not found or API limit reached");
+                        return response.json();
+                    })
+                    .then(data => {
+                        const commitObj = Array.isArray(data) ? data[0] : data;
+                        if (!commitObj || !commitObj.commit) {
+                            throw new Error("No commit data found");
+                        }
+
+                        const dateObj = new Date(commitObj.commit.author.date);
+                        const options = { 
+                            year: 'numeric', 
+                            month: 'short', 
+                            day: 'numeric', 
+                            hour: '2-digit', 
+                            minute: '2-digit',
+                            second: '2-digit'
+                        };
+                        const commitDate = dateObj.toLocaleString(undefined, options);
+                        const commitMessage = commitObj.commit.message;
+                        const commitUrl = commitObj.html_url;
+                        const commitHash = commitObj.sha.substring(0, 7);
+                        const authorName = commitObj.commit.author.name || username;
+
+                        bodyEl.innerHTML = `
+                            <p><strong>Status:</strong> Synchronized with repository.</p>
+                            <div class="xp-commit-card">
+                                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px;">
+                                    <strong>Last commit: <a href="${commitUrl}" target="_blank" style="color: #0055ea; font-family: monospace;">[${commitHash}]</a></strong>
+                                    <span style="font-size: 10px; color: #555;">Author: ${escapeHtml(authorName)}</span>
+                                </div>
+                                <div class="xp-commit-message">${escapeHtml(commitMessage)}</div>
+                                <div style="font-size: 10px; color: #555; text-align: right;">
+                                    Committed on: <strong>${commitDate}</strong>
+                                </div>
+                            </div>
+                            <p style="margin-top: 10px; font-size: 11px;">
+                                View full history and source files on <a href="https://github.com/${username}/${repo}" target="_blank" style="color: #0055ea;">GitHub</a>.
+                            </p>
+                        `;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching last commit:', error);
+                        bodyEl.innerHTML = `
+                            <div style="padding: 10px; background: #fff2f2; border: 1px solid #d99; border-radius: 3px; color: #900;">
+                                <strong>Notice:</strong> Latest update data currently unavailable.<br>
+                                <span style="font-size: 10px; color: #666;">(GitHub API hourly rate limit may be reached or network is offline)</span>
+                            </div>
+                            <p style="margin-top: 10px;">
+                                You can view updates directly on <a href="https://github.com/${username}/${repo}/commits" target="_blank" style="color: #0055ea;">GitHub Commits</a>.
+                            </p>
+                        `;
+                    });
+            }
+
+            fetchLatestCommit();
+
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', fetchLatestCommit);
+            }
+
+            return;
+        }
     }
 
     function createThumbnailElement(itemData, currentArray, currentIndex) {

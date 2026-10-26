@@ -604,7 +604,96 @@ body {
 }
 
 
+/* ==========================================================================
+   UPDATES.DOC (WORDPAD / DOCUMENT VIEWER STYLES)
+   ========================================================================== */
+.xp-doc-layout {
+    background-color: #808080; /* Classic document workspace neutral gray */
+    padding: 12px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
 
+.xp-doc-page {
+    background: #ffffff;
+    width: 100%;
+    max-width: 520px;
+    min-height: 100%;
+    padding: 22px 26px;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+    border: 1px solid #777;
+    font-family: Tahoma, 'Segoe UI', Geneva, sans-serif;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #000;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.xp-doc-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 2px solid #0055ea;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+}
+
+.xp-doc-header img {
+    width: 32px;
+    height: 32px;
+    filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.3));
+}
+
+.xp-doc-header h2 {
+    font-size: 15px;
+    margin: 0;
+    color: #00339c;
+}
+
+.xp-doc-header p {
+    font-size: 11px;
+    color: #555;
+    margin: 2px 0 0 0;
+}
+
+.xp-doc-body {
+    flex-grow: 1;
+}
+
+.xp-commit-card {
+    background: #f7f9ff;
+    border: 1px solid #7ba2e7;
+    border-radius: 3px;
+    padding: 12px;
+    margin: 12px 0;
+}
+
+.xp-commit-message {
+    font-family: 'Lucida Console', Consolas, monospace;
+    font-size: 12px;
+    background: #ffffff;
+    border: 1px solid #b0c4de;
+    border-radius: 2px;
+    padding: 10px;
+    margin: 8px 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: #111;
+}
+
+.xp-doc-footer {
+    border-top: 1px solid #d0d0d0;
+    padding-top: 12px;
+    margin-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
 
 /* ==========================================================================
