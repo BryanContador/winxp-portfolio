@@ -634,8 +634,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             contentContainer.innerHTML = `
                 <div class="xp-about-icons-content">
-                    <p>Most of the icons used in this project are extracted directly from an official Windows XP ISO. I do not claim ownership of these images; all associated rights and copyrights belong to Microsoft Corporation.</p>
-                    <p>All original content (including artwork, descriptions, and other text), is Copyright © 2026 Benjamin Counter. All Rights Reserved. Protected under the laws of Mexico and international copyright treaties</p>
+                    <p>The majority of the icons used in this project were extracted directly from an official Windows XP ISO, and converted into PNG format. I do not claim ownership of these assets; all associated rights and copyrights belong to Microsoft Corporation.</p>
+                    <p>All original content (including artwork, descriptions, and other text) is Copyright &copy; 2026 Benjamin Counter. All Rights Reserved. Protected under the laws of Mexico and international copyright treaties</p>
                     <div class="xp-about-icons-actions">
                         <button class="xp-btn" id="about-icons-ok-btn">OK</button>
                     </div>
