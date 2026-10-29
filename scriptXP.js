@@ -706,7 +706,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="xp-doc-header">
                             <img src="resources/Menu/Updates.png" alt="UPDATES.doc">
                             <div>
-                                <h2>UPDATES.doc</h2>
+                                <h2>UPDATES</h2>
                                 <p>Project changelog: <a href="https://github.com/BryanContador/winxp-portfolio" target="_blank" style="color: #0055ea;">BryanContador/winxp-portfolio</a></p>
                             </div>
                         </div>
